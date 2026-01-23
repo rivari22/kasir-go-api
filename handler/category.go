@@ -72,14 +72,14 @@ func GetCategoryByID(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-type createCategoryRequest struct {
+type categoryRequest struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
 
 func CreateCategory(w http.ResponseWriter, r *http.Request) {
 	// read and decode json body
-	var categoryRequest createCategoryRequest
+	var categoryRequest categoryRequest
 	if err := json.NewDecoder(r.Body).Decode(&categoryRequest); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
@@ -115,6 +115,62 @@ func CreateCategory(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(genericReturn{
 		Data:    newCategoryData.Name,
 		Message: "success create new category",
+	})
+}
+
+func UpdateCategoryById(w http.ResponseWriter, r *http.Request) {
+	// get ID from path
+	idStr := r.PathValue("id")
+	if idStr == "" {
+		http.Error(w, "Empty category ID", http.StatusBadRequest)
+		return
+	}
+
+	// convert to int
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid category ID", http.StatusBadRequest)
+		return
+	}
+
+	// get json from body req
+	var categoryRequest categoryRequest
+	if err := json.NewDecoder(r.Body).Decode(&categoryRequest); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// validate name is not empty
+	if categoryRequest.Name == "" {
+		http.Error(w, "Name should be not empty", http.StatusBadRequest)
+		return
+	}
+
+	// make iteration and update data by same id
+	isCategoryFound := false
+	mu.Lock()
+	for index := range categories {
+		if categories[index].ID == id {
+			categories[index] = model.Category{
+				ID:          id,
+				Name:        categoryRequest.Name,
+				Description: categoryRequest.Description,
+			}
+			isCategoryFound = true
+			break
+		}
+	}
+	mu.Unlock()
+
+	if !isCategoryFound {
+		http.Error(w, "Category not found, invalid category ID", http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(genericReturn{
+		Data:    id,
+		Message: "success update category by id",
 	})
 }
 
