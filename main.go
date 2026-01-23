@@ -1,6 +1,7 @@
 package main
 
 import (
+	"kasir-api/config"
 	"kasir-api/handler"
 	"log"
 	"net/http"
@@ -9,7 +10,9 @@ import (
 func main() {
 	port := ":8080"
 
-	http.HandleFunc("/categories", func(w http.ResponseWriter, r *http.Request) {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/categories", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			handler.GetCategories(w, r)
@@ -20,7 +23,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/categories/{id}", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/categories/{id}", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			handler.GetCategoryByID(w, r)
@@ -33,7 +36,10 @@ func main() {
 		}
 	})
 
-	if err := http.ListenAndServe(port, nil); err != nil {
+	handlerCors := config.CorsMiddleware(mux)
+
+	log.Println("Server running on port:", port)
+	if err := http.ListenAndServe(port, handlerCors); err != nil {
 		log.Fatal("Error starting server:", err)
 	}
 }
