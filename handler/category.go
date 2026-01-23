@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"kasir-api/model"
 	"net/http"
 	"slices"
@@ -107,7 +106,6 @@ func CreateCategory(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	categories = append(categories, newCategoryData)
 	mu.Unlock()
-	fmt.Println(categories)
 
 	// return json
 	w.Header().Set("Content-Type", "application/json")

@@ -1,23 +1,22 @@
 package main
 
 import (
-	"fmt"
 	"kasir-api/handler"
 	"log"
 	"net/http"
 )
 
 func main() {
-	fmt.Println("hello ini kasir API")
 	port := ":8080"
 
-	// get /categories
 	http.HandleFunc("/categories", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			handler.GetCategories(w, r)
 		case http.MethodPost:
 			handler.CreateCategory(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	})
 
@@ -29,6 +28,8 @@ func main() {
 			handler.UpdateCategoryById(w, r)
 		case http.MethodDelete:
 			handler.DeleteCategoryById(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	})
 
