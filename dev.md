@@ -10,8 +10,8 @@ task: https://docs.kodingworks.io/s/17137b9a-ed7a-4950-ba9e-eb11299531c2
 ID
 Name
 Description
-- [] **Create routes and handlers** Endpoint yang Wajib Ada: 
-- [] **GET** `/categories` → Ambil semua kategori
+- [!] **Create routes and handlers** Endpoint yang Wajib Ada: 
+- [x] **GET** `/categories` → Ambil semua kategori
 - [] **POST** `/categories` → Tambah kategori
 - [] **PUT** `/categories/{id}` → Update kategori
 - [] **GET** `/categories/{id}` → Ambil detail satu kategori
