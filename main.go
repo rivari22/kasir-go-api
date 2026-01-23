@@ -21,6 +21,13 @@ func main() {
 		}
 	})
 
+	http.HandleFunc("/categories/{id}", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			handler.GetCategoryByID(w, r)
+		}
+	})
+
 	if err := http.ListenAndServe(port, nil); err != nil {
 		log.Fatal("Error starting server:", err)
 	}

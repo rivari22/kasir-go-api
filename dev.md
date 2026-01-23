@@ -12,7 +12,7 @@ Name
 Description
 - [!] **Create routes and handlers** Endpoint yang Wajib Ada: 
 - [x] **GET** `/categories` → Ambil semua kategori
-- [] **POST** `/categories` → Tambah kategori
+- [x] **POST** `/categories` → Tambah kategori
 - [] **PUT** `/categories/{id}` → Update kategori
-- [] **GET** `/categories/{id}` → Ambil detail satu kategori
+- [x] **GET** `/categories/{id}` → Ambil detail satu kategori
 - [] **DELETE** `/categories/{id}` → Hapus kategori

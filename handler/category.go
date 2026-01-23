@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"kasir-api/model"
 	"net/http"
+	"strconv"
 	"sync"
 )
 
@@ -26,6 +27,46 @@ func GetCategories(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(genericReturn{
 		Data:    categories,
+		Message: "success get categories",
+	})
+}
+
+func GetCategoryByID(w http.ResponseWriter, r *http.Request) {
+	mu.RLock()
+	defer mu.RUnlock()
+
+	// get ID from path
+	idStr := r.PathValue("id")
+	if idStr == "" {
+		http.Error(w, "Empty category ID", http.StatusBadRequest)
+		return
+	}
+
+	// convert to int
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid category ID", http.StatusBadRequest)
+		return
+	}
+
+	// find category by id from slice categories
+	var findCategory model.Category
+	for i := 0; i < len(categories); i++ {
+		if categories[i].ID == id {
+			findCategory = categories[i]
+			break
+		}
+	}
+
+	// handle not found
+	if findCategory.Name == "" && findCategory.ID == 0 {
+		http.Error(w, "Category not found, Invalid category ID", http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(genericReturn{
+		Data:    findCategory,
 		Message: "success get categories",
 	})
 }
