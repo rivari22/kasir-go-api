@@ -25,6 +25,8 @@ func main() {
 		switch r.Method {
 		case http.MethodGet:
 			handler.GetCategoryByID(w, r)
+		case http.MethodDelete:
+			handler.DeleteCategoryById(w, r)
 		}
 	})
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"kasir-api/model"
 	"net/http"
+	"slices"
 	"strconv"
 	"sync"
 )
@@ -67,7 +68,7 @@ func GetCategoryByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(genericReturn{
 		Data:    findCategory,
-		Message: "success get categories",
+		Message: "success get category by id",
 	})
 }
 
@@ -114,5 +115,43 @@ func CreateCategory(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(genericReturn{
 		Data:    newCategoryData.Name,
 		Message: "success create new category",
+	})
+}
+
+func DeleteCategoryById(w http.ResponseWriter, r *http.Request) {
+	// get ID from path
+	idStr := r.PathValue("id")
+	if idStr == "" {
+		http.Error(w, "Empty category ID", http.StatusBadRequest)
+		return
+	}
+
+	// convert to int
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid category ID", http.StatusBadRequest)
+		return
+	}
+
+	// find index category by id from slice categories
+	indexToDelete := slices.IndexFunc(categories, func(category model.Category) bool {
+		return category.ID == id
+	})
+
+	// handle not found
+	if indexToDelete == -1 {
+		http.Error(w, "Category not found, Invalid category ID", http.StatusBadRequest)
+		return
+	}
+
+	// delete category by index
+	mu.Lock()
+	categories = slices.Delete(categories, indexToDelete, indexToDelete+1)
+	mu.Unlock()
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(genericReturn{
+		Data:    indexToDelete,
+		Message: "success delete category by id",
 	})
 }
