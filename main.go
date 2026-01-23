@@ -13,8 +13,12 @@ func main() {
 
 	// get /categories
 	http.HandleFunc("/categories", func(w http.ResponseWriter, r *http.Request) {
-		// handler here
-		handler.GetCategories(w, r)
+		switch r.Method {
+		case http.MethodGet:
+			handler.GetCategories(w, r)
+		case http.MethodPost:
+			handler.CreateCategory(w, r)
+		}
 	})
 
 	if err := http.ListenAndServe(port, nil); err != nil {
