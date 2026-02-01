@@ -1,4 +1,4 @@
-package handler
+package handlers
 
 import (
 	"encoding/json"
@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"sync"
 )
+
+// TODO: unused old handler, should remove later
 
 // temporary store data, because no db
 var (
